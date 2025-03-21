@@ -47,7 +47,7 @@ namespace Assignment_3_CRUD___Model.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Show edit form
+        // Show edit form
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
@@ -95,5 +95,11 @@ namespace Assignment_3_CRUD___Model.Controllers
 
         // 🔹 **Helper Method**: Find book or return null
         private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
+
+        private IActionResult NotFound()
+        {
+            //add 404 page
+            return View("NotFound");
+        }
     }
 }
