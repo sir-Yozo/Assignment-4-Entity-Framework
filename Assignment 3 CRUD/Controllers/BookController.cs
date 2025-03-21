@@ -1,84 +1,68 @@
 ﻿using Assignment_3_CRUD___Model.Models;
+using Assignment_3_CRUD___Model.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_3_CRUD___Model.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("[controller]")]
     public class BookController : Controller
     {
-        //sample data
-        private static List<Book> books = new List<Book>
-        {
-            new Book
-            {
-                Id = 1,
-                Title = "To Kill a Mockingbird",
-                Author = "Harper Lee",
-                PublishedDate = new DateTime(1960, 7, 11),
-                Genre = "Fiction",
-                Availability = true
-            },
-            new Book
-            {
-                Id = 2,
-                Title = "1984",
-                Author = "George Orwell",
-                PublishedDate = new DateTime(1949, 6, 8),
-                Genre = "Dystopian",
-                Availability = true
-            },
-            new Book
-            {
-                Id = 3,
-                Title = "The Great Gatsby",
-                Author = "F. Scott Fitzgerald",
-                PublishedDate = new DateTime(1925, 4, 10),
-                Genre = "Tragedy",
-                Availability = false
-            }
-        };
+        private readonly IBookRepository _bookRepository;
 
-        //get all books
+        public BookController(IBookRepository bookRepository)
+        {
+            _bookRepository = bookRepository;
+        }
+
+
+        // ✅ Display all books
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Index()
         {
-            return Ok(books);
-
-
+            return View(_bookRepository.GetAllBooks());
         }
 
-        //get a book by ID
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        // ✅ Display book details
+        [HttpGet("Details/{id}")]
+        public IActionResult Details(int id)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            return Ok(book);
-
+            var book = _bookRepository.GetBookById(id);
+            return book != null ? View(book) : NotFound();
         }
 
-        //adding new book
-        [HttpPost]
-        public IActionResult Post(Book newBook)
+        // ✅ Show create form
+        [HttpGet("Create")]
+        public IActionResult Create()
         {
-            books.Add(newBook);
-            return Ok(books);
-
+            return View();
         }
 
-        //updating a book by ID
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Book updatedBook)
+        // ✅ Add a new book
+        [HttpPost("Create")]
+        public IActionResult Create(Book newBook)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid) return View(newBook);
+
+            _bookRepository.AddBook(newBook);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ✅ Show edit form
+        [HttpGet("Edit/{id}")]
+        public IActionResult Edit(int id)
+        {
+            var book = FindOrFail(id);
+            return book != null ? View(book) : NotFound();
+        }
+
+        // ✅ Update book details
+        [HttpPost("Edit/{id}")]
+        public IActionResult Edit(int id, Book updatedBook)
+        {
+            if (!ModelState.IsValid) return View(updatedBook);
+
+            var book = FindOrFail(id);
+            if (book == null) return NotFound();
 
             book.Title = updatedBook.Title;
             book.Author = updatedBook.Author;
@@ -86,23 +70,30 @@ namespace Assignment_3_CRUD___Model.Controllers
             book.Genre = updatedBook.Genre;
             book.Availability = updatedBook.Availability;
 
-            return Ok(book);
+            _bookRepository.UpdateBook(book);
+            return RedirectToAction(nameof(Index));
         }
 
-        //delete a book by ID
-        [HttpDelete("{id}")]
+        // ✅ Show delete confirmation
+        [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            books.Remove(book);
-            return Ok(book);
-
+            var book = FindOrFail(id);
+            return book != null ? View(book) : NotFound();
         }
 
+        // ✅ Confirm and delete book
+        [HttpPost("Delete/{id}")]
+        public IActionResult ConfirmDelete(int id)
+        {
+            var book = FindOrFail(id);
+            if (book == null) return NotFound();
+
+            _bookRepository.DeleteBook(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // 🔹 **Helper Method**: Find book or return null
+        private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
     }
 }

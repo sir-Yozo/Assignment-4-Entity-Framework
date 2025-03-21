@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Library</title>
+
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <!-- Home Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <!-- Books Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/book">Books</a>
+                    </li>
+                    <!-- Edit Links (for now just placeholders) -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">PlaceHolder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">PlaceHolder</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content section -->
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+
+</body>
+</html>

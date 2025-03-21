@@ -6,9 +6,9 @@ namespace Assignment_3_CRUD___Model.Controllers
     public class HomeController : Controller
     {
         [Route("/")]
-        public string Index()
+        public IActionResult Index()
         {
-            return "Home Page";
+            return View();
         }
     }
 }

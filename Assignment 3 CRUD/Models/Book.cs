@@ -13,7 +13,7 @@ namespace Assignment_3_CRUD___Model.Models
 
         [Required]
         [StringLength(100)]
-        public string Author { get; set; }
+        public string Author { get; set; } 
 
         [Required]
         public DateTime PublishedDate { get; set; }
