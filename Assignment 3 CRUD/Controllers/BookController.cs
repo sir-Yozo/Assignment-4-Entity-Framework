@@ -15,14 +15,14 @@ namespace Assignment_3_CRUD___Model.Controllers
         }
 
 
-        // ✅ Display all books
+        // Display all books
         [HttpGet]
         public IActionResult Index()
         {
             return View(_bookRepository.GetAllBooks());
         }
 
-        // ✅ Display book details
+        // Display book details
         [HttpGet("Details/{id}")]
         public IActionResult Details(int id)
         {
@@ -30,14 +30,14 @@ namespace Assignment_3_CRUD___Model.Controllers
             return book != null ? View(book) : NotFound();
         }
 
-        // ✅ Show create form
+        //Show create form
         [HttpGet("Create")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // ✅ Add a new book
+        //Add a new book
         [HttpPost("Create")]
         public IActionResult Create(Book newBook)
         {
