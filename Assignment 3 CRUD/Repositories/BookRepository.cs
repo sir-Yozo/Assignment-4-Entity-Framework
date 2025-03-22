@@ -13,7 +13,7 @@ namespace Assignment_3_CRUD___Model.Repositories
                 Id = 1,
                 Title = "Great Big Beautiful Life",
                 Author = "Emily Henry",
-                PublishedDate = new DateTime(2025, 3, 1),
+                PublishedDate = new DateOnly(2025, 3, 1),
                 Genre = "Fiction",
                 Availability = true
             },
@@ -22,7 +22,7 @@ namespace Assignment_3_CRUD___Model.Repositories
                 Id = 2,
                 Title = "Sunrise on the Reaping",
                 Author = "Suzanne Collins",
-                PublishedDate = new DateTime(2025, 2, 15),
+                PublishedDate = new DateOnly(2025, 3, 1),
                 Genre = "Dystopian",
                 Availability = true
             },
@@ -31,7 +31,7 @@ namespace Assignment_3_CRUD___Model.Repositories
                 Id = 3,
                 Title = "The Knight and the Moth",
                 Author = "Rachel Gillig",
-                PublishedDate = new DateTime(2025, 1, 20),
+                PublishedDate = new DateOnly(2025, 3, 1),
                 Genre = "Fantasy",
                 Availability = true
             }

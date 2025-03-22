@@ -8,7 +8,6 @@ namespace Assignment_3_CRUD___Model.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
         public string FullName { get; set; }
 
         [Required]
@@ -23,7 +22,6 @@ namespace Assignment_3_CRUD___Model.Models
         public string PhoneNumber { get; set; }
 
         [Required]
-        [StringLength(200)]
         public string Address { get; set; }
     }
 }

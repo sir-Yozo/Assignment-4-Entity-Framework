@@ -17,7 +17,7 @@ namespace Assignment_3_CRUD___Model.Controllers
 
         // Display all books
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult BookList()
         {
             return View(_bookRepository.GetAllBooks());
         }
@@ -32,7 +32,7 @@ namespace Assignment_3_CRUD___Model.Controllers
 
         //Show create form
         [HttpGet("Create")]
-        public IActionResult Create()
+        public IActionResult AddBook()
         {
             return View();
         }
@@ -41,10 +41,16 @@ namespace Assignment_3_CRUD___Model.Controllers
         [HttpPost("Create")]
         public IActionResult Create(Book newBook)
         {
-            //if (!ModelState.IsValid) return View(newBook);
 
-            _bookRepository.AddBook(newBook);
-            return RedirectToAction(nameof(Index));
+            if (ModelState.IsValid)
+            {
+                _bookRepository.AddBook(newBook);
+                return RedirectToAction(nameof(BookList)); //Redirect to book List page
+            }
+
+            return View(newBook);
+            
+                
         }
 
         // Show edit form
@@ -64,13 +70,13 @@ namespace Assignment_3_CRUD___Model.Controllers
                 return NotFound();
             }
 
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 _bookRepository.Update(book);
-                return RedirectToAction("Details", new { id = book.Id });  // Redirect to book details
-            //}
+                return RedirectToAction(nameof(BookList)); //Redirect to book List page
+            }
 
-            //return View(book);
+            return View(book);
         }
 
         //Show delete confirmation
@@ -89,7 +95,7 @@ namespace Assignment_3_CRUD___Model.Controllers
             if (book == null) return NotFound();
 
             _bookRepository.DeleteBook(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(BookList));
         }
 
         //Helper Method: Find book or return null

@@ -1,97 +1,110 @@
 ﻿using Assignment_3_CRUD___Model.Models;
+using Assignment_3_CRUD___Model.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Assignment_3_CRUD.Controllers
+namespace Assignment_3_CRUD___Model.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("[controller]")]
     public class ReaderController : Controller
     {
-
-        private static List<Reader> readers = new List<Reader>
+        private readonly IReaderRepository _readerRepository;
+        //private readonly IBookRepository _bookRepository;
+        public ReaderController(IReaderRepository readerRepository)
         {
-            new Reader
-            {
-                Id = 1,
-                FullName = "John Doe",
-                Email = "john.doe@example.com",
-                MembershipDate = new DateTime(2020, 1, 15),
-                PhoneNumber = "123-456-7890",
-                Address = "123 Main St, Anytown, USA"
-            },
-            new Reader
-            {
-                Id = 2,
-                FullName = "Jane Smith",
-                Email = "jane.smith@example.com",
-                MembershipDate = new DateTime(2021, 5, 22),
-                PhoneNumber = "987-654-3210",
-                Address = "456 Elm St, Othertown, USA"
-            },
-            new Reader
-            {
-                Id = 3,
-                FullName = "Alice Johnson",
-                Email = "alice.johnson@example.com",
-                MembershipDate = new DateTime(2019, 9, 30),
-                PhoneNumber = "403-123-4567",
-                Address = "789 Oak St, Sometown, USA"
-            }
-        };
+            _readerRepository = readerRepository;
+        }
 
+        //Display All Reader
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult ReaderListPage()
         {
-            return Ok(readers);
+            return View(_readerRepository.GetAllReaders());
         }
-
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        //Get Reader Details
+        [HttpGet("Details/{id}")]
+        public IActionResult ReaderDetails(int id)
         {
-            var reader = readers.FirstOrDefault(r => r.Id == id);
+            var reader = _readerRepository.GetReaderById(id);
             if (reader == null)
             {
                 return NotFound();
             }
-            return Ok(reader);
+            return View(reader);
+        }
+        //Show create form
+        [HttpGet("AddReader")]
+        public IActionResult AddReader()
+        {
+            return View();
+        }
+        //Add a new Reader
+        [HttpPost("AddReader")]
+        public IActionResult AddReader(Reader newReader)
+        {
+
+            if (ModelState.IsValid)
+            {
+                _readerRepository.AddReader(newReader);
+                return RedirectToAction(nameof(ReaderListPage)); //Redirect to Reader List page
+            }
+
+            return View(newReader);
         }
 
-        [HttpPost]
-        public IActionResult Post(Reader newReader)
+        // Show edit form
+        [HttpGet("Edit/{id}")]
+        public IActionResult EditReader(int id)
         {
-            readers.Add(newReader);
-            return Ok(newReader);
+            var reader = FindOrFail(id);
+            return reader != null ? View(reader) : NotFound();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Reader updatedReader)
+        // Update book details
+        [HttpPost("Edit/{id}")]
+        public IActionResult EditReader(int id, Reader reader)
         {
-            var reader = readers.FirstOrDefault(r => r.Id == id);
-            if (reader == null)
+            if (id != reader.Id)
             {
                 return NotFound();
             }
 
-            reader.FullName = updatedReader.FullName;
-            reader.Email = updatedReader.Email;
-            reader.MembershipDate = updatedReader.MembershipDate;
-            reader.PhoneNumber = updatedReader.PhoneNumber;
-            reader.Address = updatedReader.Address;
-
-            return Ok(reader);
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var reader = readers.FirstOrDefault(r => r.Id == id);
-            if (reader == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                _readerRepository.UpdateReader(reader);
+                return RedirectToAction(nameof(ReaderListPage)); //Redirect to reader List page
             }
 
-            readers.Remove(reader);
-            return Ok(reader);
+            return View(reader);
         }
+        //Helper Method: Find book or return null
+        private Reader FindOrFail(int id) => _readerRepository.GetReaderById(id);
+
+        private IActionResult NotFound()
+        {
+            //add 404 page
+            return View("");
+        }
+
+        //Show delete confirmation
+        [HttpGet("Delete/{id}")]
+        public IActionResult DeleteReader(int id)
+        {
+            var reader = FindOrFail(id);
+            return reader != null ? View(reader) : NotFound();
+        }
+
+        //Confirm and delete reader
+        [HttpPost("Delete/{id}")]
+        public IActionResult ConfirmDelete(int id)
+        {
+            var book = FindOrFail(id);
+            if (book == null) return NotFound();
+
+            _readerRepository.DeleteReader(id);
+            return RedirectToAction(nameof(ReaderListPage));
+        }
+
+
     }
 }
