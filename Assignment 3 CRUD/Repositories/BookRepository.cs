@@ -49,12 +49,13 @@ namespace Assignment_3_CRUD___Model.Repositories
 
         public void AddBook(Book book)
         {
+            book.Id = books.Count() + 1;
             books.Add(book);
         }
 
-        public void UpdateBook(Book book)
+        public void Update(Book book)
         {
-            var existingBook = GetBookById(book.Id);
+            var existingBook = books.FirstOrDefault(b => b.Id == book.Id);
             if (existingBook != null)
             {
                 existingBook.Title = book.Title;
@@ -64,6 +65,7 @@ namespace Assignment_3_CRUD___Model.Repositories
                 existingBook.Availability = book.Availability;
             }
         }
+
 
         public void DeleteBook(int id)
         {

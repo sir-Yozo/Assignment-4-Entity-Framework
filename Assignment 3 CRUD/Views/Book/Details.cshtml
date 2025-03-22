@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 @model Assignment_3_CRUD___Model.Models.Book
-
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +21,7 @@
                 <p><strong>Availability:</strong> @(Model.Availability ? "Available" : "Not Available")</p>
             </div>
         </div>
-        <a href="/Book">Back to Book List</a>
+        <a asp-controller="book" asp-action="Index" class="btn btn-primary">Back</a>
     </div>
 </body>
 </html>

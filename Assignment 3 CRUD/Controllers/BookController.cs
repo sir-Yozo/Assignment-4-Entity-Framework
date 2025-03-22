@@ -41,7 +41,7 @@ namespace Assignment_3_CRUD___Model.Controllers
         [HttpPost("Create")]
         public IActionResult Create(Book newBook)
         {
-            if (!ModelState.IsValid) return View(newBook);
+            //if (!ModelState.IsValid) return View(newBook);
 
             _bookRepository.AddBook(newBook);
             return RedirectToAction(nameof(Index));
@@ -55,26 +55,25 @@ namespace Assignment_3_CRUD___Model.Controllers
             return book != null ? View(book) : NotFound();
         }
 
-        // ✅ Update book details
+        // Update book details
         [HttpPost("Edit/{id}")]
-        public IActionResult Edit(int id, Book updatedBook)
+        public IActionResult Edit(int id, Book book)
         {
-            if (!ModelState.IsValid) return View(updatedBook);
+            if (id != book.Id)
+            {
+                return NotFound();
+            }
 
-            var book = FindOrFail(id);
-            if (book == null) return NotFound();
+            //if (ModelState.IsValid)
+            //{
+                _bookRepository.Update(book);
+                return RedirectToAction("Details", new { id = book.Id });  // Redirect to book details
+            //}
 
-            book.Title = updatedBook.Title;
-            book.Author = updatedBook.Author;
-            book.PublishedDate = updatedBook.PublishedDate;
-            book.Genre = updatedBook.Genre;
-            book.Availability = updatedBook.Availability;
-
-            _bookRepository.UpdateBook(book);
-            return RedirectToAction(nameof(Index));
+            //return View(book);
         }
 
-        // ✅ Show delete confirmation
+        //Show delete confirmation
         [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
@@ -82,7 +81,7 @@ namespace Assignment_3_CRUD___Model.Controllers
             return book != null ? View(book) : NotFound();
         }
 
-        // ✅ Confirm and delete book
+        //Confirm and delete book
         [HttpPost("Delete/{id}")]
         public IActionResult ConfirmDelete(int id)
         {
@@ -93,13 +92,13 @@ namespace Assignment_3_CRUD___Model.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // 🔹 **Helper Method**: Find book or return null
+        //Helper Method: Find book or return null
         private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
 
         private IActionResult NotFound()
         {
             //add 404 page
-            return View("NotFound");
+            return View("");
         }
     }
 }
