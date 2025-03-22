@@ -33,7 +33,7 @@ namespace Assignment_3_CRUD___Model.Repositories
                 Author = "Rachel Gillig",
                 PublishedDate = new DateTime(2025, 1, 20),
                 Genre = "Fantasy",
-                Availability = false
+                Availability = true
             }
         };
 
