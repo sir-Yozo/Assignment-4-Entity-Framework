@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 @using Assignment_3_CRUD___Model.Models
-@model List<Borrowing>
+@model List<BorrowingDetailsViewModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@
         <table class="table table-bordered">
             <thead class="table-dark">
                 <tr>
-                    <th>Id</th>
+                    <th></th>
                     <th>Book</th>
                     <th>Reader</th>
                     <th>Borrow Date</th>
@@ -31,21 +31,21 @@
                 {
                     <tr>
                         <td>
-                            <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Id">@borrowing.Id</a>
-                        <td>@borrowing.BookId</td>
-                        <td>@borrowing.ReaderId</td>
-                        <td>@borrowing.BorrowDate.ToShortDateString()</td>
-                        <td>@borrowing.ReturnDate.ToShortDateString()</td>
-                        <td>@borrowing.ReturnedDate</td>
+                            <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Borrowing.Id">View</a>
+                        <td>@borrowing.BookName</td>
+                        <td>@borrowing.ReaderName</td>
+                        <td>@borrowing.Borrowing.BorrowDate.ToShortDateString()</td>
+                        <td>@borrowing.Borrowing.ReturnDate.ToShortDateString()</td>
+                        <td>@borrowing.Borrowing.ReturnedDate</td>
                         <td>
-                            <a asp-controller="reader" asp-action="EditReader" asp-route-id="@borrowing.Id">Edit</a> |
-                            <a asp-controller="reader" asp-action="ConfirmDelete" asp-route-id="@borrowing.Id">Delete</a>
+                            <a asp-controller="reader" asp-action="EditReader" asp-route-id="@borrowing.Borrowing.Id">Edit</a> |
+                            <a asp-controller="reader" asp-action="ConfirmDelete" asp-route-id="@borrowing.Borrowing.Id">Delete</a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        <a class="btn btn-primary" asp-controller="borrowing" asp-action="AddBorrowing">Add</a>
+        <a class="btn btn-primary" asp-controller="borrowing" asp-action="AddBorrow">Add</a>
     </div>
 </body>
 </html>

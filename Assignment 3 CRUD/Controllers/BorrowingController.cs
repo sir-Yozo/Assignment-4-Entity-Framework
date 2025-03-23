@@ -18,10 +18,19 @@ namespace Assignment_3_CRUD___Model.Controllers
         [HttpGet]
         public IActionResult BorrowingList()
         {
-            return View(_borrowingRepository.GetAllBorrowings());
+            var borrowings = _borrowingRepository.GetAllBorrowings();
+
+            var borrowingViewModels = borrowings.Select(borrowing => new BorrowingDetailsViewModel
+            {
+                Borrowing = borrowing,
+                BookName = _borrowingRepository.GetBookName(borrowing.BookId),
+                ReaderName = _borrowingRepository.GetReaderName(borrowing.ReaderId)
+            }).ToList();
+
+            return View(borrowingViewModels);
         }
 
-        // Display Borrowing details1
+        // Display Borrowing details
         [HttpGet("Details/{id}")]
         public IActionResult BorrowingDetails(int id)
         {
@@ -42,6 +51,25 @@ namespace Assignment_3_CRUD___Model.Controllers
             };
 
             return View(viewModel);
+        }
+        //Show create form
+        [HttpGet("AddBorrow")]
+        public IActionResult AddBorrow()
+        {
+            return View();
+        }
+        //Add a new Reader
+        [HttpPost("AddBorrow")]
+        public IActionResult AddBorrow(Borrowing newBorrowing)
+        {
+
+            if (ModelState.IsValid)
+            {
+                _borrowingRepository.AddBorrowing(newBorrowing);
+                return RedirectToAction(nameof(BorrowingList)); //Redirect to Reader List page
+            }
+
+            return View(newBorrowing);
         }
 
 

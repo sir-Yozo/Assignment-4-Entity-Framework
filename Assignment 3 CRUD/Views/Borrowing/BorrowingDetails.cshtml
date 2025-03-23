@@ -1,7 +1,8 @@
 ﻿@{
     Layout = "_Layout";
 }
-@model Assignment_3_CRUD___Model.Models.Borrowing
+
+@model Assignment_3_CRUD___Model.Models.BorrowingDetailsViewModel;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
 <html>
@@ -14,11 +15,11 @@
         <h2 class="mb-3">Borrowing Details</h2>
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">@Model.BookId</h4>
-                <p><strong>Reader:</strong> @Model.ReaderId</p>
-                <p><strong>Borrow Date:</strong> @Model.BorrowDate.ToShortDateString()</p>
-                <p><strong>Return Date:</strong> @Model.ReturnDate.ToShortDateString()</p>
-                <p><strong>Returned Date:</strong> @Model.ReturnedDate</p>
+                <h4 class="card-title">@Model.BookName</h4>
+                <p><strong>Reader:</strong> @Model.ReaderName</p>
+                <p><strong>Borrow Date:</strong> @Model.Borrowing.BorrowDate.ToShortDateString()</p>
+                <p><strong>Return Date:</strong> @Model.Borrowing.ReturnDate.ToShortDateString()</p>
+                <p><strong>Returned Date:</strong> @Model.Borrowing.ReturnedDate</p>
             </div>
         </div>
         <a asp-controller="borrowing" asp-action="BorrowingList" class="btn btn-primary">Back</a>
