@@ -47,6 +47,19 @@ namespace Assignment_3_CRUD___Model.Repositories
             return books.FirstOrDefault(b => b.Id == id);
         }
 
+        public void SetToAvailable(int id)
+        {
+            var book = GetBookById(id);
+            book.Availability = true;
+            
+        }
+        public void SetToNotAvailable(int id)
+        {
+            var book = GetBookById(id);
+            book.Availability = false;
+
+        }
+
         public void AddBook(Book book)
         {
             book.Id = books.Count() + 1;

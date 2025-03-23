@@ -1,6 +1,7 @@
 ﻿using Assignment_3_CRUD___Model.Models;
 using Assignment_3_CRUD___Model.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Assignment_3_CRUD___Model.Controllers
 {
@@ -8,10 +9,14 @@ namespace Assignment_3_CRUD___Model.Controllers
     public class BorrowingController : Controller
     {
         private readonly IBorrowingRepository _borrowingRepository;
+        private readonly IBookRepository _bookRepository;
+        private readonly IReaderRepository _readerRepository;
 
-        public BorrowingController(IBorrowingRepository borrowingRepository)
+        public BorrowingController(IBorrowingRepository borrowingRepository, IBookRepository bookRepository, IReaderRepository readerRepository)
         {
             _borrowingRepository = borrowingRepository;
+            _bookRepository = bookRepository;
+            _readerRepository = readerRepository;
         }
 
         // Display all borrowings
@@ -56,6 +61,18 @@ namespace Assignment_3_CRUD___Model.Controllers
         [HttpGet("AddBorrow")]
         public IActionResult AddBorrow()
         {
+            var books = _bookRepository.GetAllBooks()
+                .Where(b => b.Availability)
+                .Select(b => new { b.Id, b.Title })
+                .ToList();
+            ViewBag.Books = new SelectList(books, "Id", "Title");
+
+            var readers = _readerRepository.GetAllReaders().Select(r => new { r.Id, r.FullName }).ToList();
+            ViewBag.Readers = new SelectList(readers, "Id", "FullName");
+
+
+
+
             return View();
         }
         //Add a new Reader
@@ -63,12 +80,20 @@ namespace Assignment_3_CRUD___Model.Controllers
         public IActionResult AddBorrow(Borrowing newBorrowing)
         {
 
+
             if (ModelState.IsValid)
             {
                 _borrowingRepository.AddBorrowing(newBorrowing);
+                // Toggle book availability (mark it as borrowed)
+                _bookRepository.SetToNotAvailable(newBorrowing.BookId);
                 return RedirectToAction(nameof(BorrowingList)); //Redirect to Reader List page
             }
+            var books = _bookRepository.GetAllBooks().Select(b => new { b.Id, b.Title }).ToList();
+            ViewBag.Books = new SelectList(books, "Id", "Title");
+            
 
+            var readers = _readerRepository.GetAllReaders().Select(r => new { r.Id, r.FullName }).ToList();
+            ViewBag.Readers = new SelectList(readers, "Id", "FullName");
             return View(newBorrowing);
         }
 

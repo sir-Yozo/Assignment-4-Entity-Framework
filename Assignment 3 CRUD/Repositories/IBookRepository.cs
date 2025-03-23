@@ -10,5 +10,9 @@ namespace Assignment_3_CRUD___Model.Repositories
         void AddBook(Book book);
         void Update(Book book); 
         void DeleteBook(int id);
+
+        void SetToAvailable(int id);
+
+        void SetToNotAvailable(int id);
     }
 }
