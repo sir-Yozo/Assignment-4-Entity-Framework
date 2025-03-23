@@ -8,6 +8,7 @@ builder.Services.AddControllersWithViews();
 // Register the repository for dependency injection 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
+builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 
 
 var app = builder.Build();

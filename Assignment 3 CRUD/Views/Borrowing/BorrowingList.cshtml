@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "_Layout";
+}
+@using Assignment_3_CRUD___Model.Models
+@model List<Borrowing>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Borrowing List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-3">Borrowing List</h2>
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Book</th>
+                    <th>Reader</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Returned Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var borrowing in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Id">@borrowing.Id</a>
+                        <td>@borrowing.BookId</td>
+                        <td>@borrowing.ReaderId</td>
+                        <td>@borrowing.BorrowDate.ToShortDateString()</td>
+                        <td>@borrowing.ReturnDate.ToShortDateString()</td>
+                        <td>@borrowing.ReturnedDate</td>
+                        <td>
+                            <a asp-controller="reader" asp-action="EditReader" asp-route-id="@borrowing.Id">Edit</a> |
+                            <a asp-controller="reader" asp-action="ConfirmDelete" asp-route-id="@borrowing.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <a class="btn btn-primary" asp-controller="borrowing" asp-action="AddBorrowing">Add</a>
+    </div>
+</body>
+</html>
