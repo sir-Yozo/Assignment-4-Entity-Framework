@@ -20,6 +20,8 @@
                 <p><strong>Borrow Date:</strong> @Model.Borrowing.BorrowDate.ToShortDateString()</p>
                 <p><strong>Return Date:</strong> @Model.Borrowing.ReturnDate.ToShortDateString()</p>
                 <p><strong>Returned Date:</strong> @Model.Borrowing.ReturnedDate</p>
+                <p><strong>Notes:</strong> @Model.Borrowing.Status</p>
+                <p><strong>Notes:</strong> @Model.Borrowing.Notes</p>
             </div>
         </div>
         <a asp-controller="borrowing" asp-action="BorrowingList" class="btn btn-primary">Back</a>

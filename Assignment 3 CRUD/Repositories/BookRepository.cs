@@ -1,6 +1,7 @@
 ﻿using Assignment_3_CRUD___Model.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Assignment_3_CRUD___Model.Repositories
 {
@@ -49,14 +50,19 @@ namespace Assignment_3_CRUD___Model.Repositories
 
         public void SetToAvailable(int id)
         {
-            var book = GetBookById(id);
-            book.Availability = true;
-            
+            var book = books.FirstOrDefault(b => b.Id == id);
+            if (book != null)
+            {
+                book.Availability = true;
+            }
         }
         public void SetToNotAvailable(int id)
         {
-            var book = GetBookById(id);
-            book.Availability = false;
+            var book = books.FirstOrDefault(b => b.Id == id);
+            if (book != null)
+            {
+                book.Availability = false;
+            }
 
         }
 

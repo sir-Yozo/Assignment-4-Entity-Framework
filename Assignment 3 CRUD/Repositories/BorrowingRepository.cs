@@ -15,7 +15,9 @@ namespace Assignment_3_CRUD___Model.Repositories
                 ReaderId = 1,
                 BorrowDate = new DateTime(2025, 2, 10),
                 ReturnDate = new DateTime(2025, 4, 24),
-                ReturnedDate = null
+                ReturnedDate = null,
+                Notes = "",
+                Status = StatusEnum.Borrowed
             }
         };
 
@@ -60,11 +62,13 @@ namespace Assignment_3_CRUD___Model.Repositories
             var existingBorrowing = borrowings.FirstOrDefault(b => b.Id == borrowing.Id);
             if (existingBorrowing != null)
             {
-                existingBorrowing.BookId = borrowing.ReaderId;
+                existingBorrowing.BookId = borrowing.BookId;
                 existingBorrowing.ReaderId = borrowing.ReaderId;
                 existingBorrowing.BorrowDate = borrowing.BorrowDate;
                 existingBorrowing.ReturnDate = borrowing.ReturnDate;
                 existingBorrowing.ReturnedDate = borrowing.ReturnedDate;
+                existingBorrowing.Notes = borrowing.Notes;
+                existingBorrowing.Status = borrowing.Status;
             }
         }
 
