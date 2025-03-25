@@ -5,7 +5,7 @@ namespace Assignment_3_CRUD___Model.Controllers
 {
     public class HomeController : Controller
     {
-        [Route("/")]
+        [HttpGet("Index")]
         public IActionResult Index()
         {
             return View();

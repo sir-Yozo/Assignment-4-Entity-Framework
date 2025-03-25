@@ -9,7 +9,6 @@ namespace Assignment_3_CRUD___Model.Controllers
     public class ReaderController : Controller
     {
         private readonly IReaderRepository _readerRepository;
-        //private readonly IBookRepository _bookRepository;
         public ReaderController(IReaderRepository readerRepository)
         {
             _readerRepository = readerRepository;
