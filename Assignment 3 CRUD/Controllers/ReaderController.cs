@@ -1,9 +1,9 @@
-﻿using Assignment_3_CRUD___Model.Models;
-using Assignment_3_CRUD___Model.Repositories;
+﻿using Assignment_3_CRUD.Models;
+using Assignment_3_CRUD.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Assignment_3_CRUD___Model.Controllers
+namespace Assignment_3_CRUD.Controllers
 {
     [Route("[controller]")]
     public class ReaderController : Controller

@@ -1,6 +1,6 @@
-using Assignment_3_CRUD___Model.Middleware;
+using Assignment_3_CRUD.Middleware;
 using Assignment_3_CRUD.Repositories;
-using Assignment_3_CRUD___Model.Repositories;
+//using Assignment_3_CRUD___Model.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

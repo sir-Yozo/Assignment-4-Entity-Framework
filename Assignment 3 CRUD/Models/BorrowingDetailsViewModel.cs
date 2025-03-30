@@ -1,7 +1,7 @@
-﻿using Assignment_3_CRUD___Model.Models;
+﻿using Assignment_3_CRUD.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace Assignment_3_CRUD___Model.Models
+namespace Assignment_3_CRUD.Models
 {
     public class BorrowingDetailsViewModel
     {

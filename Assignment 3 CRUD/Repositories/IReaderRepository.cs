@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Assignment_3_CRUD___Model.Models;
+using Assignment_3_CRUD.Models;
 
-namespace Assignment_3_CRUD___Model.Repositories
+namespace Assignment_3_CRUD.Repositories
 {
     public interface IReaderRepository
     {

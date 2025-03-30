@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Assignment_3_CRUD___Model.Models
+namespace Assignment_3_CRUD.Models
 {
     public class Book
     {
+        [Key]
         [Required]
         public int Id { get; set; }
 

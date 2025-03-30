@@ -1,9 +1,9 @@
-﻿using Assignment_3_CRUD___Model.Models;
+﻿using Assignment_3_CRUD.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace Assignment_3_CRUD___Model.Repositories
+namespace Assignment_3_CRUD.Repositories
 {
     public class BookRepository : IBookRepository
     {

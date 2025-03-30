@@ -1,7 +1,6 @@
-﻿using Assignment_3_CRUD___Model.Models;
+﻿using Assignment_3_CRUD.Models;
 using Microsoft.AspNetCore.Mvc;
 using Assignment_3_CRUD.Repositories;
-using Assignment_3_CRUD___Model.Repositories;
 
 namespace Assignment_3_CRUD.Controllers
 {

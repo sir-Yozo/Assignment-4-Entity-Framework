@@ -1,8 +1,8 @@
-﻿using Assignment_3_CRUD___Model.Models;
-using Assignment_3_CRUD___Model.Repositories;
+﻿using Assignment_3_CRUD.Models;
+using Assignment_3_CRUD.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Assignment_3_CRUD___Model.Controllers
+namespace Assignment_3_CRUD.Controllers
 {
     [Route("[controller]")]
     public class BookController : Controller
@@ -21,7 +21,6 @@ namespace Assignment_3_CRUD___Model.Controllers
         {
             return View(_bookRepository.GetAllBooks());
         }
-        //Test
         // Display book details
         [HttpGet("Details/{id}")]
         public IActionResult Details(int id)

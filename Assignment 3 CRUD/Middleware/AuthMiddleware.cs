@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
-namespace Assignment_3_CRUD___Model.Middleware
+namespace Assignment_3_CRUD.Middleware
 {
     public class AuthMiddleware
     {
