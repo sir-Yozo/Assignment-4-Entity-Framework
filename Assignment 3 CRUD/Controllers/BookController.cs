@@ -21,7 +21,7 @@ namespace Assignment_3_CRUD___Model.Controllers
         {
             return View(_bookRepository.GetAllBooks());
         }
-
+        //Test
         // Display book details
         [HttpGet("Details/{id}")]
         public IActionResult Details(int id)
