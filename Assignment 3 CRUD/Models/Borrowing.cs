@@ -4,6 +4,7 @@ namespace Assignment_3_CRUD.Models
 {
     public class Borrowing
     {
+        [Key]
         [Required]
         public int Id { get; set; }
 
