@@ -4,6 +4,7 @@ using Assignment_3_CRUD.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Assignment_3_CRUD.Migrations
 {
     [DbContext(typeof(LMA_DBcontext))]
-    partial class BookDBcontextModelSnapshot : ModelSnapshot
+    [Migration("20250330230710_UpdateOnModels")]
+    partial class UpdateOnModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +53,7 @@ namespace Assignment_3_CRUD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("Assignment_3_CRUD.Models.Borrowing", b =>
@@ -89,7 +92,7 @@ namespace Assignment_3_CRUD.Migrations
 
                     b.HasIndex("ReaderId");
 
-                    b.ToTable("Borrowings", (string)null);
+                    b.ToTable("Borrowings");
                 });
 
             modelBuilder.Entity("Assignment_3_CRUD.Models.Reader", b =>
@@ -121,7 +124,7 @@ namespace Assignment_3_CRUD.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Readers", (string)null);
+                    b.ToTable("Readers");
                 });
 
             modelBuilder.Entity("Assignment_3_CRUD.Models.Borrowing", b =>

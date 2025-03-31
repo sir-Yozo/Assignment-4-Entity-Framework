@@ -13,6 +13,7 @@ namespace Assignment_3_CRUD.Models
 
         [Required]
         public int ReaderId { get; set; }
+       
 
         [Required]
         public DateTime BorrowDate { get; set; }
@@ -22,17 +23,18 @@ namespace Assignment_3_CRUD.Models
 
         public DateTime? ReturnedDate { get; set; }
 
-        [Required]
-        public String Notes { get; set; }
+        public String? Notes { get; set; }
 
-        [Required]
         public StatusEnum Status { get; set; } // Use enum for status
+
+        public Book? Book { get; set; }
+        public Reader? Reader { get; set; }
+
 
     }
 
     public enum StatusEnum
     {
-        
         Borrowed,
         Returned,
         Cancelled

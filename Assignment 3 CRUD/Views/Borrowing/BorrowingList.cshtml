@@ -36,10 +36,10 @@
                             <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Borrowing.Id">View</a>
                         </td>
                         <td>
-                            <a asp-controller="Book" asp-action="Details" asp-route-id="@borrowing.Borrowing.BookId">@borrowing.BookName</a>
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@borrowing.Book.Id">@borrowing.Book.Title</a>
                         </td>
                         <td>
-                            <a asp-controller="Reader" asp-action="ReaderDetails" asp-route-id="@borrowing.Borrowing.ReaderId">@borrowing.ReaderName</a>
+                            <a asp-controller="Reader" asp-action="ReaderDetails" asp-route-id="@borrowing.Reader.Id">@borrowing.Reader.FullName</a>
                         </td>   
                         <td>@borrowing.Borrowing.BorrowDate.ToShortDateString()</td>
                         <td>@borrowing.Borrowing.ReturnDate.ToShortDateString()</td>

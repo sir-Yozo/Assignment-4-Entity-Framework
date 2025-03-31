@@ -19,7 +19,7 @@ builder.Services.AddSession(options =>
 // Register the repository for dependency injection 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IReaderRepository, ReaderRepository>();
-builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
+//builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
 
 

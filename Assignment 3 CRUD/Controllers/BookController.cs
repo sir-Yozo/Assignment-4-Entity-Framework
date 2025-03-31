@@ -1,17 +1,21 @@
-﻿using Assignment_3_CRUD.Models;
-using Assignment_3_CRUD.Repositories;
+﻿using Assignment_3_CRUD.Data;
+using Assignment_3_CRUD.Models;
+//using Assignment_3_CRUD.Repositories; removed - Not needed
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Assignment_3_CRUD.Controllers
 {
     [Route("[controller]")]
     public class BookController : Controller
     {
-        private readonly IBookRepository _bookRepository;
+        //private readonly IBookRepository _bookRepository; removed - Not needed
+        private readonly LMA_DBcontext _context;
 
-        public BookController(IBookRepository bookRepository)
+        public BookController(LMA_DBcontext context)
         {
-            _bookRepository = bookRepository;
+            _context = context;
         }
 
 
@@ -19,13 +23,13 @@ namespace Assignment_3_CRUD.Controllers
         [HttpGet]
         public IActionResult BookList()
         {
-            return View(_bookRepository.GetAllBooks());
+            return View(_context.Books.ToList());
         }
         // Display book details
         [HttpGet("Details/{id}")]
         public IActionResult Details(int id)
         {
-            var book = _bookRepository.GetBookById(id);
+            var book = _context.Books.Find(id);
             return book != null ? View(book) : NotFound();
         }
 
@@ -43,8 +47,9 @@ namespace Assignment_3_CRUD.Controllers
 
             if (ModelState.IsValid)
             {
-                _bookRepository.AddBook(newBook);
-                return RedirectToAction(nameof(BookList)); //Redirect to book List page
+                _context.Books.Add(newBook);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(BookList)); // Redirect to book List page
             }
 
             return View(newBook);
@@ -56,7 +61,7 @@ namespace Assignment_3_CRUD.Controllers
         [HttpGet("Edit/{id}")]
         public IActionResult Edit(int id)
         {
-            var book = FindOrFail(id);
+            var book = _context.Books.Find(id);
             return book != null ? View(book) : NotFound();
         }
 
@@ -71,8 +76,9 @@ namespace Assignment_3_CRUD.Controllers
 
             if (ModelState.IsValid)
             {
-                _bookRepository.Update(book);
-                return RedirectToAction(nameof(BookList)); //Redirect to book List page
+                _context.Entry(book).State = EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction(nameof(BookList)); // Redirect to book List page
             }
 
             return View(book);
@@ -82,7 +88,7 @@ namespace Assignment_3_CRUD.Controllers
         [HttpGet("Delete/{id}")]
         public IActionResult Delete(int id)
         {
-            var book = FindOrFail(id);
+            var book = _context.Books.Find(id);
             return book != null ? View(book) : NotFound();
         }
 
@@ -90,15 +96,16 @@ namespace Assignment_3_CRUD.Controllers
         [HttpPost("Delete/{id}")]
         public IActionResult ConfirmDelete(int id)
         {
-            var book = FindOrFail(id);
+            var book = _context.Books.Find(id);
             if (book == null) return NotFound();
 
-            _bookRepository.DeleteBook(id);
+            _context.Books.Remove(book);
+            _context.SaveChanges();
             return RedirectToAction(nameof(BookList));
         }
 
-        //Helper Method: Find book or return null
-        private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
+        //Helper Method: Find book or return null (Removed- not needed)
+        //private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
 
         private IActionResult NotFound()
         {

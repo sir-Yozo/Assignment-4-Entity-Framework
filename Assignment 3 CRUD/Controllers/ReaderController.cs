@@ -1,6 +1,8 @@
-﻿using Assignment_3_CRUD.Models;
-using Assignment_3_CRUD.Repositories;
+﻿using Assignment_3_CRUD.Data;
+using Assignment_3_CRUD.Models;
+//using Assignment_3_CRUD.Repositories; removed not needed
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Assignment_3_CRUD.Controllers
@@ -8,28 +10,26 @@ namespace Assignment_3_CRUD.Controllers
     [Route("[controller]")]
     public class ReaderController : Controller
     {
-        private readonly IReaderRepository _readerRepository;
-        public ReaderController(IReaderRepository readerRepository)
+        //private readonly IReaderRepository _readerRepository; removed not needed
+        private readonly LMA_DBcontext _context;
+
+        public ReaderController(LMA_DBcontext context)
         {
-            _readerRepository = readerRepository;
+            _context = context;
         }
 
         //Display All Reader
         [HttpGet]
         public IActionResult ReaderListPage()
         {
-            return View(_readerRepository.GetAllReaders());
+            return View(_context.Readers.ToList());
         }
         //Get Reader Details
         [HttpGet("Details/{id}")]
         public IActionResult ReaderDetails(int id)
         {
-            var reader = _readerRepository.GetReaderById(id);
-            if (reader == null)
-            {
-                return NotFound();
-            }
-            return View(reader);
+            var reader = _context.Readers.Find(id);
+            return reader != null ? View(reader) : NotFound();
         }
         //Show create form
         [HttpGet("AddReader")]
@@ -44,8 +44,9 @@ namespace Assignment_3_CRUD.Controllers
 
             if (ModelState.IsValid)
             {
-                _readerRepository.AddReader(newReader);
-                return RedirectToAction(nameof(ReaderListPage)); //Redirect to Reader List page
+                _context.Readers.Add(newReader);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(ReaderListPage)); // Redirect to Reader List page
             }
 
             return View(newReader);
@@ -55,11 +56,11 @@ namespace Assignment_3_CRUD.Controllers
         [HttpGet("Edit/{id}")]
         public IActionResult EditReader(int id)
         {
-            var reader = FindOrFail(id);
+            var reader = _context.Readers.Find(id);
             return reader != null ? View(reader) : NotFound();
         }
 
-        // Update book details
+        // Update reader  details
         [HttpPost("Edit/{id}")]
         public IActionResult EditReader(int id, Reader reader)
         {
@@ -70,26 +71,22 @@ namespace Assignment_3_CRUD.Controllers
 
             if (ModelState.IsValid)
             {
-                _readerRepository.UpdateReader(reader);
-                return RedirectToAction(nameof(ReaderListPage)); //Redirect to reader List page
+                _context.Entry(reader).State = EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction(nameof(ReaderListPage)); // Redirect to Reader List page
             }
 
             return View(reader);
         }
-        //Helper Method: Find book or return null
-        private Reader FindOrFail(int id) => _readerRepository.GetReaderById(id);
+        
 
-        private IActionResult NotFound()
-        {
-            //add 404 page
-            return View("");
-        }
+        
 
         //Show delete confirmation
         [HttpGet("Delete/{id}")]
         public IActionResult DeleteReader(int id)
         {
-            var reader = FindOrFail(id);
+            var reader = _context.Readers.Find(id);
             return reader != null ? View(reader) : NotFound();
         }
 
@@ -97,11 +94,19 @@ namespace Assignment_3_CRUD.Controllers
         [HttpPost("Delete/{id}")]
         public IActionResult ConfirmDelete(int id)
         {
-            var book = FindOrFail(id);
-            if (book == null) return NotFound();
+            var reader = _context.Readers.Find(id);
+            if (reader == null) return NotFound();
 
-            _readerRepository.DeleteReader(id);
+            _context.Readers.Remove(reader);
+            _context.SaveChanges();
             return RedirectToAction(nameof(ReaderListPage));
+        }
+        //Helper Method: Find book or return null - removed not needed
+        //private Reader FindOrFail(int id) => _readerRepository.GetReaderById(id);
+        private IActionResult NotFound()
+        {
+            //add 404 page
+            return View("");
         }
 
 

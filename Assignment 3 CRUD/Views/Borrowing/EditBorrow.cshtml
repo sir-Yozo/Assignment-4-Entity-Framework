@@ -19,16 +19,16 @@
         <form asp-controller="Borrowing" asp-action="EditBorrow" method="post">
 
             <input type="hidden" asp-for="Borrowing.Id" />
-
+ 
             <div class="form-group">
-                <label asp-for="BookName" class="control-label">Book</label>
-                <input asp-for="BookName" class="form-control" readonly />
+                <label  class="control-label">Book</label>
+                <input asp-for="Book.Title" class="form-control" readonly />
             </div>
 
             <div class="form-group">
-                <label asp-for="ReaderName" class="control-label">Reader</label>
-                <input asp-for="ReaderName" class="form-control" readonly />
-            </div>
+                <label  class="control-label">Reader</label>
+                <input asp-for="Reader.FullName" class="form-control" readonly />
+            </div> 
 
             <div class="form-group">
                 <label asp-for="Borrowing.BorrowDate" class="control-label">Borrow Date</label>
