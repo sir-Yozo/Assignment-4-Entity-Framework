@@ -33,15 +33,15 @@ namespace Assignment_3_CRUD.Controllers
                 .Include(b => b.Reader)
                 .ToList();
 
-            var borrowingViewModels = borrowings.Select(borrowing => new BorrowingDetailsViewModel
-            {
-                Borrowing = borrowing,
-                Book = borrowing.Book,
-                Reader = borrowing.Reader
-            }).ToList();
+            //var borrowingViewModels = borrowings.Select(borrowing => new BorrowingDetailsViewModel
+            //{
+            //    Borrowing = borrowing,
+            //    Book = borrowing.Book,
+            //    Reader = borrowing.Reader
+            //}).ToList();
 
 
-            return View(borrowingViewModels);
+            return View(borrowings);
         }
 
         //Display Borrowing details
@@ -53,19 +53,20 @@ namespace Assignment_3_CRUD.Controllers
                 .Include(b => b.Reader)
                 .FirstOrDefault(b => b.Id == id);
 
+
             if (borrowing == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BorrowingDetailsViewModel
-            {
-                Borrowing = borrowing,
-                Book = borrowing.Book,
-                Reader = borrowing.Reader
-            };
+            //var viewModel = new BorrowingDetailsViewModel
+            //{
+            //    Borrowing = borrowing,
+            //    Book = borrowing.Book,
+            //    Reader = borrowing.Reader
+            //};
 
-            return View(viewModel);
+            return View(borrowing);
         }
 
         //Show create form
@@ -85,6 +86,7 @@ namespace Assignment_3_CRUD.Controllers
 
             return View();
         }
+
         // Add a new Borrowing
         [HttpPost("AddBorrow")]
         public IActionResult AddBorrow(Borrowing newBorrowing)
@@ -125,7 +127,7 @@ namespace Assignment_3_CRUD.Controllers
         }
 
 
-        //Show create form
+        //Show edit form
         [HttpGet("EditBorrow")]
         public IActionResult EditBorrow(int Id)
         {
@@ -139,118 +141,123 @@ namespace Assignment_3_CRUD.Controllers
                 return NotFound();
             }
 
-            var viewModel = new BorrowingDetailsViewModel
-            {
-                Borrowing = borrowing,
-                Book = borrowing.Book,
-                Reader = borrowing.Reader
-            };
+            //var viewModel = new BorrowingDetailsViewModel
+            //{
+            //    Borrowing = borrowing,
+            //    Book = borrowing.Book,
+            //    Reader = borrowing.Reader
+            //};
 
-            return View(viewModel);
+            return View(borrowing);
         }
 
         [HttpPost("EditBorrow")]
-        public IActionResult EditBorrow(BorrowingDetailsViewModel borrowingView)
+        public IActionResult EditBorrow(Borrowing updatedBorrowing)
         {
-            if (borrowingView.Borrowing == null)
+            if (updatedBorrowing.Id == 0)
             {
-                return BadRequest("Invalid borrowing data.");
+                ModelState.AddModelError("", "Invalid borrowing data.");
+                return View(updatedBorrowing);
             }
 
             // Validation: If Status is "Returned", ReturnedDate is required
-            if (borrowingView.Borrowing.Status == StatusEnum.Returned && borrowingView.Borrowing.ReturnedDate == null)
+            if (updatedBorrowing.Status == StatusEnum.Returned && updatedBorrowing.ReturnedDate == null)
             {
-                ModelState.AddModelError("Borrowing.ReturnedDate", "Returned Date is required when the status is 'Returned'.");
+                ModelState.AddModelError("ReturnedDate", "Returned Date is required when the status is 'Returned'.");
             }
 
             if (!ModelState.IsValid)
             {
-                return View(borrowingView); // Return view with validation errors
+                updatedBorrowing.Book = _context.Books.Find(updatedBorrowing.BookId);
+                updatedBorrowing.Reader = _context.Readers.Find(updatedBorrowing.ReaderId);
+                return View(updatedBorrowing);
             }
 
-            var borrowing = _context.Borrowings.Find(borrowingView.Borrowing.Id);
+            var borrowing = _context.Borrowings.Find(updatedBorrowing.Id);
+            if (borrowing == null)
+            {
+                return NotFound("Borrowing record not found.");
+            }
+
+            // Store previous status
+            var previousStatus = borrowing.Status;
+
+            // Update borrowing details
+            borrowing.BorrowDate = updatedBorrowing.BorrowDate;
+            borrowing.ReturnDate = updatedBorrowing.ReturnDate;
+            borrowing.Notes = updatedBorrowing.Notes;
+            borrowing.Status = updatedBorrowing.Status;
+            borrowing.ReturnedDate = updatedBorrowing.ReturnedDate;
+
+            // Update book availability based on status change
+            var book = _context.Books.Find(borrowing.BookId);
+            if (book != null)
+            {
+                if (previousStatus == StatusEnum.Borrowed && borrowing.Status == StatusEnum.Returned)
+                {
+                    book.Availability = true;
+                }
+                else if (previousStatus == StatusEnum.Returned && borrowing.Status == StatusEnum.Borrowed)
+                {
+                    book.Availability = false;
+                    borrowing.ReturnedDate = null;
+                }
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction(nameof(BorrowingList));
+        }
+
+
+
+
+        //Show delete confirmation
+        [HttpGet("Delete/{id}")]
+        public IActionResult DeleteBorrow(int id)
+        {
+            var borrowing = _context.Borrowings
+                .Include(b => b.Book)
+                .Include(b => b.Reader)
+                .FirstOrDefault(b => b.Id == id);
+
             if (borrowing == null)
             {
                 return NotFound();
             }
 
-            // Check if the status has changed
-            var previousStatus = borrowing.Status;
 
-            // Update borrowing details
-            borrowing.BorrowDate = borrowingView.Borrowing.BorrowDate;
-            borrowing.ReturnDate = borrowingView.Borrowing.ReturnDate;
-            borrowing.Notes = borrowingView.Borrowing.Notes;
-            borrowing.Status = borrowingView.Borrowing.Status;
-            borrowing.ReturnedDate = borrowingView.Borrowing.ReturnedDate;
+            return View(borrowing);
+        }
 
+        //Confirm and delete Borrowing
+        [HttpPost("Delete/{id}")]
+        public IActionResult DeleteBorrow(Borrowing borrowing)
+        {
+            var existingBorrowing = _context.Borrowings.Find(borrowing.Id);
+
+            if (existingBorrowing == null)
+            {
+                return NotFound();
+            }
+
+            // Fetch the associated book using BookId from the borrowing object
+            var book = _context.Books.Find(existingBorrowing.BookId);
+            if (book != null)
+            {
+                book.Availability = true; // Mark the book as available
+                _context.SaveChanges(); // Save the changes to the book
+            }
+
+            // Remove the borrowing entry from the database
+            _context.Borrowings.Remove(existingBorrowing);
             _context.SaveChanges();
-
-            // If the status is changed to "Returned", mark the book as available
-            if (previousStatus == StatusEnum.Borrowed && borrowing.Status == StatusEnum.Returned)
-            {
-                var book = _context.Books.Find(borrowing.BookId);
-                if (book != null)
-                {
-                    book.Availability = true;
-                    _context.SaveChanges();
-                }
-            }
-
-            // If the status is changed from "Returned" to "Borrowed", mark the book as not available
-            if (previousStatus == StatusEnum.Returned && borrowing.Status == StatusEnum.Borrowed)
-            {
-                var book = _context.Books.Find(borrowing.BookId);
-                if (book != null)
-                {
-                    book.Availability = false;
-                    _context.SaveChanges();
-                }
-            }
 
             return RedirectToAction(nameof(BorrowingList));
         }
 
 
-        /*
-            //Show delete confirmation
-            [HttpGet("Delete/{id}")]
-            public IActionResult DeleteBorrow(int id)
-            {
-                var borrowing = FindOrFail(id);
+        //Helper Method: Find Borrowing or return null
+        //private Borrowing FindOrFail(int id) => _borrowingRepository.GetBorrowingById(id);
 
-                if (borrowing == null)
-                {
-                    return NotFound();
-                }
-
-                var bookName = _borrowingRepository.GetBookName(borrowing.BookId);
-                var readerName = _borrowingRepository.GetReaderName(borrowing.ReaderId);
-
-                var viewModel = new BorrowingDetailsViewModel
-                {
-                    Borrowing = borrowing,
-                    BookName = bookName,
-                    ReaderName = readerName
-                };
-
-                return View(viewModel);
-            }
-
-            //Confirm and delete Borrowing
-            [HttpPost("Delete/{id}")]
-            public IActionResult ConfirmDelete(int id)
-            {
-                var borrowing = FindOrFail(id);
-                if (borrowing == null) return NotFound();
-                _bookRepository.SetToAvailable(borrowing.BookId);
-
-                _borrowingRepository.DeleteBorrowing(id);
-                return RedirectToAction(nameof(BorrowingList));
-            }
-
-            //Helper Method: Find Borrowing or return null
-            private Borrowing FindOrFail(int id) => _borrowingRepository.GetBorrowingById(id);
-            */
     }
 }

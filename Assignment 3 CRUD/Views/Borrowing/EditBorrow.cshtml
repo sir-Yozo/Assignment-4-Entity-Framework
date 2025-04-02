@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 @using Assignment_3_CRUD.Models
-@model Assignment_3_CRUD.Models.BorrowingDetailsViewModel;
+@model Assignment_3_CRUD.Models.Borrowing;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
@@ -17,53 +17,57 @@
         <h2>Edit Borrowing</h2>
 
         <form asp-controller="Borrowing" asp-action="EditBorrow" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="BookId" />
+            <input type="hidden" asp-for="ReaderId" />
 
-            <input type="hidden" asp-for="Borrowing.Id" />
- 
             <div class="form-group">
-                <label  class="control-label">Book</label>
-                <input asp-for="Book.Title" class="form-control" readonly />
+                <label class="control-label">Book</label>
+                <input type="text" class="form-control" value="@Model.Book?.Title" readonly />
             </div>
 
             <div class="form-group">
-                <label  class="control-label">Reader</label>
-                <input asp-for="Reader.FullName" class="form-control" readonly />
-            </div> 
-
-            <div class="form-group">
-                <label asp-for="Borrowing.BorrowDate" class="control-label">Borrow Date</label>
-                <input asp-for="Borrowing.BorrowDate" type="date" class="form-control" />
-                <span asp-validation-for="Borrowing.BorrowDate" class="text-danger"></span>
+                <label class="control-label">Reader</label>
+                <input type="text" class="form-control" value="@Model.Reader?.FullName" readonly />
             </div>
 
             <div class="form-group">
-                <label asp-for="Borrowing.ReturnDate" class="control-label">Return Date</label>
-                <input asp-for="Borrowing.ReturnDate" type="date" class="form-control" />
-                <span asp-validation-for="Borrowing.ReturnDate" class="text-danger"></span>
+                <label asp-for="BorrowDate" class="control-label">Borrow Date</label>
+                <input asp-for="BorrowDate" type="date" class="form-control" />
+                <span asp-validation-for="BorrowDate" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Borrowing.Notes" class="control-label">Notes</label>
-                <input asp-for="Borrowing.Notes" class="form-control" />
-                <span asp-validation-for="Borrowing.Notes" class="text-danger"></span>
+                <label asp-for="ReturnDate" class="control-label">Return Date</label>
+                <input asp-for="ReturnDate" type="date" class="form-control" />
+                <span asp-validation-for="ReturnDate" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Borrowing.Status" class="control-label">Status</label>
-                <select asp-for="Borrowing.Status" class="form-control" asp-items="Html.GetEnumSelectList<StatusEnum>()"></select>
+                <label asp-for="Notes" class="control-label">Notes</label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Borrowing.ReturnedDate" class="control-label">Returned Date</label>
-                <input asp-for="Borrowing.ReturnedDate" type="date" class="form-control" />
-                <span asp-validation-for="Borrowing.ReturnedDate" class="text-danger"></span>
+                <label asp-for="Status" class="control-label">Status</label>
+                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<StatusEnum>()"></select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ReturnedDate" class="control-label">Returned Date</label>
+                <input asp-for="ReturnedDate" type="date" class="form-control" id="returnedDate" />
+                <span asp-validation-for="ReturnedDate" class="text-danger"></span>
             </div>
 
             <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-controller="Borrowing" asp-action="BorrowingList" class="btn btn-primary">Back</a>
+                <a asp-controller="Borrowing" asp-action="BorrowingList" class="btn btn-secondary">Back</a>
             </div>
         </form>
+
+        
+
 
 
 
@@ -71,4 +75,5 @@
 
 
 </body>
+
 </html>

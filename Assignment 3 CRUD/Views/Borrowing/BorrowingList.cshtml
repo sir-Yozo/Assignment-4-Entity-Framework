@@ -2,7 +2,7 @@
     Layout = "_Layout";
 }
 @using Assignment_3_CRUD.Models
-@model List<BorrowingDetailsViewModel>
+@model List<Borrowing>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
@@ -33,7 +33,7 @@
                 {
                     <tr>
                         <td>
-                            <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Borrowing.Id">View</a>
+                            <a asp-controller="Borrowing" asp-action="BorrowingDetails" asp-route-id="@borrowing.Id">View</a>
                         </td>
                         <td>
                             <a asp-controller="Book" asp-action="Details" asp-route-id="@borrowing.Book.Id">@borrowing.Book.Title</a>
@@ -41,14 +41,14 @@
                         <td>
                             <a asp-controller="Reader" asp-action="ReaderDetails" asp-route-id="@borrowing.Reader.Id">@borrowing.Reader.FullName</a>
                         </td>   
-                        <td>@borrowing.Borrowing.BorrowDate.ToShortDateString()</td>
-                        <td>@borrowing.Borrowing.ReturnDate.ToShortDateString()</td>
-                        <td>@borrowing.Borrowing.ReturnedDate</td>
-                        <td>@borrowing.Borrowing.Status</td>
-                        <td>@borrowing.Borrowing.Notes</td>
+                        <td>@borrowing.BorrowDate.ToShortDateString()</td>
+                        <td>@borrowing.ReturnDate.ToShortDateString()</td>
+                        <td>@borrowing.ReturnedDate</td>
+                        <td>@borrowing.Status</td>
+                        <td>@borrowing.Notes</td>
                         <td>
-                            <a asp-controller="Borrowing" asp-action="EditBorrow" asp-route-id="@borrowing.Borrowing.Id">Edit</a> |
-                            <a asp-controller="Borrowing" asp-action="ConfirmDelete" asp-route-id="@borrowing.Borrowing.Id">Delete</a>
+                            <a asp-controller="Borrowing" asp-action="EditBorrow" asp-route-id="@borrowing.Id">Edit</a> |
+                            <a asp-controller="Borrowing" asp-action="DeleteBorrow" asp-route-id="@borrowing.Id">Delete</a>
                         </td>
                     </tr>
                 }
