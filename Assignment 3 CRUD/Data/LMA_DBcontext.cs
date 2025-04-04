@@ -10,5 +10,6 @@ namespace Assignment_3_CRUD.Data
         public DbSet<Book> Books { get; set; } 
         public DbSet<Reader> Readers { get; set; }
         public DbSet<Borrowing> Borrowings { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -4,7 +4,9 @@ namespace Assignment_3_CRUD.Models
 {
     public class User
     {
-        //public int Id { get; set; }
+        [Key]
+        [Required]
+        public int Id { get; set; }
         [Required]
         public string Username { get; set; }
 
