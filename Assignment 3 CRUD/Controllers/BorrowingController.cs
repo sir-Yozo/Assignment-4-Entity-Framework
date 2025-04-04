@@ -4,6 +4,7 @@ using Assignment_3_CRUD.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Assignment_3_CRUD.Controllers
@@ -254,6 +255,26 @@ namespace Assignment_3_CRUD.Controllers
 
             return RedirectToAction(nameof(BorrowingList));
         }
+
+        // Search Books by Title, Author, or Genre
+        [HttpGet("Search")]
+        public IActionResult Search(string query)
+        {
+            var borrowings = _context.Borrowings
+                .Include(b => b.Book)
+                .Include(b => b.Reader)
+                .Where(b =>
+                    (b.Book != null && b.Book.Title.Contains(query)) ||
+                    (b.Reader != null && b.Reader.FullName.Contains(query)) ||
+                    (b.Status.ToString().Contains(query)) || 
+                    (!string.IsNullOrEmpty(b.Notes) && b.Notes.Contains(query))
+                )
+                .ToList();
+
+            return View("SearchResults", borrowings);
+        }
+
+
 
 
         //Helper Method: Find Borrowing or return null

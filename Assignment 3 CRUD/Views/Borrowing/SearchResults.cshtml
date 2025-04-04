@@ -1,26 +1,20 @@
 ﻿@{
     Layout = "_Layout";
 }
-@using Assignment_3_CRUD.Models
-@model List<Borrowing>
+@model List<Assignment_3_CRUD.Models.Borrowing>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Borrowing List</title>
+    <title>Search Results</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="mb-3">Borrowing List</h2>
-        <!-- Search Form -->
-        <form asp-controller="borrowing" asp-action="Search" method="get" class="mb-3">
-            <div class="input-group">
-                <input type="text" name="query" class="form-control" placeholder="Search by Book, Reader, Status, Notes..." />
-                <button type="submit" class="btn btn-outline-primary">Search</button>
-            </div>
-        </form>
+    <h2>Search Results</h2>
+
+    @if (Model.Any())
+    {
         <table class="table table-bordered">
             <thead class="table-dark">
                 <tr>
@@ -47,7 +41,7 @@
                         </td>
                         <td>
                             <a asp-controller="Reader" asp-action="ReaderDetails" asp-route-id="@borrowing.Reader.Id">@borrowing.Reader.FullName</a>
-                        </td>   
+                        </td>
                         <td>@borrowing.BorrowDate.ToShortDateString()</td>
                         <td>@borrowing.ReturnDate.ToShortDateString()</td>
                         <td>@borrowing.ReturnedDate</td>
@@ -61,7 +55,12 @@
                 }
             </tbody>
         </table>
-        <a class="btn btn-primary" asp-controller="borrowing" asp-action="AddBorrow">Add</a>
-    </div>
+
+    }
+    else
+    {
+        <p>No Borrowing found.</p>
+    }
+    <a href="javascript:history.back()" class="btn btn-primary">Back</a>
 </body>
 </html>

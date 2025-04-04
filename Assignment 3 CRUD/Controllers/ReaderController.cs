@@ -103,6 +103,17 @@ namespace Assignment_3_CRUD.Controllers
         }
         //Helper Method: Find book or return null - removed not needed
         //private Reader FindOrFail(int id) => _readerRepository.GetReaderById(id);
+
+        // Search Reader by Name 
+        [HttpGet("Search")]
+        public IActionResult Search(string query)
+        {
+            var readers = _context.Readers
+                .Where(r => r.FullName.Contains(query))
+                .ToList();
+
+            return View("SearchResults", readers);
+        }
         private IActionResult NotFound()
         {
             //add 404 page

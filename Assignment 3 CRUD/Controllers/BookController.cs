@@ -103,6 +103,17 @@ namespace Assignment_3_CRUD.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(BookList));
         }
+        // Search Books by Title, Author, or Genre
+        [HttpGet("Search")]
+        public IActionResult Search(string query)
+        {
+            var books = _context.Books
+                .Where(b => b.Title.Contains(query) || b.Author.Contains(query) || b.Genre.Contains(query))
+                .ToList();
+
+            return View("SearchResults", books);
+        }
+
 
         //Helper Method: Find book or return null (Removed- not needed)
         //private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
