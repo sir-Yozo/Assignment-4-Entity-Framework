@@ -1,6 +1,5 @@
 ﻿using Assignment_3_CRUD.Data;
 using Assignment_3_CRUD.Models;
-using Assignment_3_CRUD.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +11,6 @@ namespace Assignment_3_CRUD.Controllers
     [Route("[controller]")]
     public class BorrowingController : Controller
     {
-
-        //private readonly IBorrowingRepository _borrowingRepository;
-        //private readonly IBookRepository _bookRepository;
-        //private readonly IReaderRepository _readerRepository;
-
-
         private readonly LMA_DBcontext _context;
 
         public BorrowingController(LMA_DBcontext context)
@@ -33,15 +26,6 @@ namespace Assignment_3_CRUD.Controllers
                 .Include(b => b.Book)
                 .Include(b => b.Reader)
                 .ToList();
-
-            //var borrowingViewModels = borrowings.Select(borrowing => new BorrowingDetailsViewModel
-            //{
-            //    Borrowing = borrowing,
-            //    Book = borrowing.Book,
-            //    Reader = borrowing.Reader
-            //}).ToList();
-
-
             return View(borrowings);
         }
 
@@ -59,13 +43,6 @@ namespace Assignment_3_CRUD.Controllers
             {
                 return NotFound();
             }
-
-            //var viewModel = new BorrowingDetailsViewModel
-            //{
-            //    Borrowing = borrowing,
-            //    Book = borrowing.Book,
-            //    Reader = borrowing.Reader
-            //};
 
             return View(borrowing);
         }
@@ -141,14 +118,6 @@ namespace Assignment_3_CRUD.Controllers
             {
                 return NotFound();
             }
-
-            //var viewModel = new BorrowingDetailsViewModel
-            //{
-            //    Borrowing = borrowing,
-            //    Book = borrowing.Book,
-            //    Reader = borrowing.Reader
-            //};
-
             return View(borrowing);
         }
 
@@ -273,12 +242,6 @@ namespace Assignment_3_CRUD.Controllers
 
             return View("SearchResults", borrowings);
         }
-
-
-
-
-        //Helper Method: Find Borrowing or return null
-        //private Borrowing FindOrFail(int id) => _borrowingRepository.GetBorrowingById(id);
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using Assignment_3_CRUD.Models;
+﻿using Assignment_3_CRUD.Migrations;
+using Assignment_3_CRUD.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Assignment_3_CRUD.Controllers
@@ -8,6 +9,10 @@ namespace Assignment_3_CRUD.Controllers
         [HttpGet("Index")]
         public IActionResult Index()
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Login");
+            }
             return View();
         }
     }
