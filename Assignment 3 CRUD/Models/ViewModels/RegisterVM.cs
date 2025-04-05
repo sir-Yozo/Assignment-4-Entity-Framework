@@ -30,8 +30,8 @@ namespace Assignment_3_CRUD.Models.ViewModels
         [Required(ErrorMessage = "Phone Number is required.")]
         public string? PhoneNumber { get; set; }
 
-        [DataType(DataType.MultilineText)]
-        public string? Address { get; set; }
+        //[DataType(DataType.MultilineText)]
+        //public string? Address { get; set; }
 
 
     }

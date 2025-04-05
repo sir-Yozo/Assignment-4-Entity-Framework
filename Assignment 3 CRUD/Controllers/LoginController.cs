@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Assignment_3_CRUD.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace Assignment_3_CRUD.Controllers
 {
@@ -9,8 +10,17 @@ namespace Assignment_3_CRUD.Controllers
     {
 
         private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
+
+        public LoginController(SignInManager<User> signInManager, UserManager<User> userManager) {
+            this.signInManager = signInManager;
+            this.userManager = userManager;
+        }
+
+
         // View login page
         [HttpGet]
+        
         public IActionResult Login()
         {
             return View();
@@ -18,56 +28,73 @@ namespace Assignment_3_CRUD.Controllers
 
         // Login - Authenticate user
         [HttpPost]
+        
         public async Task<IActionResult> Login(LoginVM model)
         {
-            if (!ModelState.IsValid)  // Check if the model is valid
+            if (ModelState.IsValid)  // Check if the model is valid
             {
-                return View("Login");  // Return to the login view with validation errors
+                //return View("Login");  // Return to the login view with validation errors
+                var result = await signInManager.PasswordSignInAsync(
+                model.Username!,  // Get username from the model
+                model.Password!,  // Get password from the model
+                false,  // Do not remember the user
+                false);  // Do not lock out on failure
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");  // Redirect to dashboard after login
+                }
+                ModelState.AddModelError("", "Invalid login attempt"); // Set error message for invalid login
             }
 
-            var result = await signInManager.PasswordSignInAsync(
-                model.Username,  // Get username from the model
-                model.Password,  // Get password from the model
-                isPersistent: false,  // Do not remember the user
-                lockoutOnFailure: false);  // Do not lock out on failure
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");  // Redirect to dashboard after login
-            }
-
-            ModelState.AddModelError("", "Invalid login attempt"); // Set error message for invalid login
-            return View("Login");
+            
+            return View(model);
+        }
+        [HttpGet]
+       
+        // View register page
+        public IActionResult Register()
+        {
+            return View();
         }
 
-        //// View register page
-        //public IActionResult Register()
-        //{
-        //    return View();
-        //}
+        // Register user
+        [HttpPost]
+ 
+        public async Task<IActionResult> Register(RegisterVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = new()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    UserName = model.Username,
+                    PasswordHash = model.Password
 
-        //// Register user
-        //[HttpPost]
-        //public IActionResult Register(Register usr)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        //var user = new User { Username = usr.Username, Password = usr.Password };
-        //        var success = _loginRepository.RegisterUser(usr.Username, usr.Password);
-        //        if (success)
-        //        {
-        //            return RedirectToAction("Login");
-        //        }
-        //        ViewData["ErrorMessage"] = "Registration failed. Please try again.";
-        //        return View(usr);
-        //    }
-        //    ViewData["ErrorMessage"] = "Invalid input. Please check your details.";
-        //    return View(usr);
-        //}
+                    //Address = model.Address,
 
-        //public IActionResult Logout()
-        //{
-        //    HttpContext.Session.Clear();  // Clear session
-        //    return RedirectToAction("Login");
-        //}
+                };
+                var result = await userManager.CreateAsync(user, model.Password!);
+                if (result.Succeeded) {
+                    await signInManager.SignInAsync(user, false);
+                    return RedirectToAction("Index", "Home");
+                }
+                foreach (var error in result.Errors) {
+                    ModelState.AddModelError("",error.Description);
+                }
+                
+            }
+            
+            return View(model);
+        }
+        [HttpGet]
+
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();  // Sign out the user
+            return RedirectToAction("Login", "Login");  // Redirect to login page
+        }
     }
 }

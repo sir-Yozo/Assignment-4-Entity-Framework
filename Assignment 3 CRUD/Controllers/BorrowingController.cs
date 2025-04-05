@@ -3,11 +3,11 @@ using Assignment_3_CRUD.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Assignment_3_CRUD.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class BorrowingController : Controller
     {
@@ -20,46 +20,41 @@ namespace Assignment_3_CRUD.Controllers
 
         // Display all borrowings
         [HttpGet]
-        public IActionResult BorrowingList()
+        public async Task<IActionResult> BorrowingList()
         {
-            var borrowings = _context.Borrowings
+            var borrowings = await _context.Borrowings
                 .Include(b => b.Book)
                 .Include(b => b.Reader)
-                .ToList();
+                .ToListAsync();
+
             return View(borrowings);
         }
 
-        //Display Borrowing details
+        // Display Borrowing details
         [HttpGet("Details/{id}")]
-        public IActionResult BorrowingDetails(int id)
+        public async Task<IActionResult> BorrowingDetails(int id)
         {
-            var borrowing = _context.Borrowings
+            var borrowing = await _context.Borrowings
                 .Include(b => b.Book)
                 .Include(b => b.Reader)
-                .FirstOrDefault(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
 
-
-            if (borrowing == null)
-            {
-                return NotFound();
-            }
-
-            return View(borrowing);
+            return borrowing != null ? View(borrowing) : NotFound();
         }
 
-        //Show create form
+        // Show create form
         [HttpGet("AddBorrow")]
-        public IActionResult AddBorrow()
+        public async Task<IActionResult> AddBorrow()
         {
-            var books = _context.Books
+            var books = await _context.Books
                 .Where(b => b.Availability)
                 .Select(b => new { b.Id, b.Title })
-                .ToList();
+                .ToListAsync();
             ViewBag.Books = new SelectList(books, "Id", "Title");
 
-            var readers = _context.Readers
+            var readers = await _context.Readers
                 .Select(r => new { r.Id, r.FullName })
-                .ToList();
+                .ToListAsync();
             ViewBag.Readers = new SelectList(readers, "Id", "FullName");
 
             return View();
@@ -67,62 +62,55 @@ namespace Assignment_3_CRUD.Controllers
 
         // Add a new Borrowing
         [HttpPost("AddBorrow")]
-        public IActionResult AddBorrow(Borrowing newBorrowing)
+        public async Task<IActionResult> AddBorrow(Borrowing newBorrowing)
         {
             if (ModelState.IsValid)
             {
-
-                var book = _context.Books.Find(newBorrowing.BookId);
-                newBorrowing.Status = StatusEnum.Borrowed; // Default selection
+                var book = await _context.Books.FindAsync(newBorrowing.BookId);
+                newBorrowing.Status = StatusEnum.Borrowed;
                 newBorrowing.Book = book;
-                newBorrowing.Reader = _context.Readers.Find(newBorrowing.ReaderId);
-                _context.Borrowings.Add(newBorrowing);
-                _context.SaveChanges();
+                newBorrowing.Reader = await _context.Readers.FindAsync(newBorrowing.ReaderId);
 
-                // Toggle book availability (mark it as borrowed)
+                _context.Borrowings.Add(newBorrowing);
+                await _context.SaveChangesAsync();
 
                 if (book != null)
                 {
                     book.Availability = false;
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
 
-                return RedirectToAction(nameof(BorrowingList)); // Redirect to Borrowing List page
+                return RedirectToAction(nameof(BorrowingList));
             }
 
-            var books = _context.Books
+            var books = await _context.Books
                 .Where(b => b.Availability)
                 .Select(b => new { b.Id, b.Title })
-                .ToList();
+                .ToListAsync();
             ViewBag.Books = new SelectList(books, "Id", "Title");
 
-            var readers = _context.Readers
+            var readers = await _context.Readers
                 .Select(r => new { r.Id, r.FullName })
-                .ToList();
+                .ToListAsync();
             ViewBag.Readers = new SelectList(readers, "Id", "FullName");
 
             return View(newBorrowing);
         }
 
-
-        //Show edit form
+        // Show edit form
         [HttpGet("EditBorrow")]
-        public IActionResult EditBorrow(int Id)
+        public async Task<IActionResult> EditBorrow(int id)
         {
-            var borrowing = _context.Borrowings
-            .Include(b => b.Book)
-            .Include(b => b.Reader)
-            .FirstOrDefault(b => b.Id == Id);
+            var borrowing = await _context.Borrowings
+                .Include(b => b.Book)
+                .Include(b => b.Reader)
+                .FirstOrDefaultAsync(b => b.Id == id);
 
-            if (borrowing == null)
-            {
-                return NotFound();
-            }
-            return View(borrowing);
+            return borrowing != null ? View(borrowing) : NotFound();
         }
 
         [HttpPost("EditBorrow")]
-        public IActionResult EditBorrow(Borrowing updatedBorrowing)
+        public async Task<IActionResult> EditBorrow(Borrowing updatedBorrowing)
         {
             if (updatedBorrowing.Id == 0)
             {
@@ -130,7 +118,6 @@ namespace Assignment_3_CRUD.Controllers
                 return View(updatedBorrowing);
             }
 
-            // Validation: If Status is "Returned", ReturnedDate is required
             if (updatedBorrowing.Status == StatusEnum.Returned && updatedBorrowing.ReturnedDate == null)
             {
                 ModelState.AddModelError("ReturnedDate", "Returned Date is required when the status is 'Returned'.");
@@ -138,29 +125,26 @@ namespace Assignment_3_CRUD.Controllers
 
             if (!ModelState.IsValid)
             {
-                updatedBorrowing.Book = _context.Books.Find(updatedBorrowing.BookId);
-                updatedBorrowing.Reader = _context.Readers.Find(updatedBorrowing.ReaderId);
+                updatedBorrowing.Book = await _context.Books.FindAsync(updatedBorrowing.BookId);
+                updatedBorrowing.Reader = await _context.Readers.FindAsync(updatedBorrowing.ReaderId);
                 return View(updatedBorrowing);
             }
 
-            var borrowing = _context.Borrowings.Find(updatedBorrowing.Id);
+            var borrowing = await _context.Borrowings.FindAsync(updatedBorrowing.Id);
             if (borrowing == null)
             {
                 return NotFound("Borrowing record not found.");
             }
 
-            // Store previous status
             var previousStatus = borrowing.Status;
 
-            // Update borrowing details
             borrowing.BorrowDate = updatedBorrowing.BorrowDate;
             borrowing.ReturnDate = updatedBorrowing.ReturnDate;
             borrowing.Notes = updatedBorrowing.Notes;
             borrowing.Status = updatedBorrowing.Status;
             borrowing.ReturnedDate = updatedBorrowing.ReturnedDate;
 
-            // Update book availability based on status change
-            var book = _context.Books.Find(borrowing.BookId);
+            var book = await _context.Books.FindAsync(borrowing.BookId);
             if (book != null)
             {
                 if (previousStatus == StatusEnum.Borrowed && borrowing.Status == StatusEnum.Returned)
@@ -174,74 +158,61 @@ namespace Assignment_3_CRUD.Controllers
                 }
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(BorrowingList));
         }
 
-
-
-
-        //Show delete confirmation
+        // Show delete confirmation
         [HttpGet("Delete/{id}")]
-        public IActionResult DeleteBorrow(int id)
+        public async Task<IActionResult> DeleteBorrow(int id)
         {
-            var borrowing = _context.Borrowings
+            var borrowing = await _context.Borrowings
                 .Include(b => b.Book)
                 .Include(b => b.Reader)
-                .FirstOrDefault(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
 
-            if (borrowing == null)
-            {
-                return NotFound();
-            }
-
-
-            return View(borrowing);
+            return borrowing != null ? View(borrowing) : NotFound();
         }
 
-        //Confirm and delete Borrowing
+        // Confirm and delete Borrowing
         [HttpPost("Delete/{id}")]
-        public IActionResult DeleteBorrow(Borrowing borrowing)
+        public async Task<IActionResult> DeleteBorrow(Borrowing borrowing)
         {
-            var existingBorrowing = _context.Borrowings.Find(borrowing.Id);
+            var existingBorrowing = await _context.Borrowings.FindAsync(borrowing.Id);
 
             if (existingBorrowing == null)
             {
                 return NotFound();
             }
 
-            // Fetch the associated book using BookId from the borrowing object
-            var book = _context.Books.Find(existingBorrowing.BookId);
+            var book = await _context.Books.FindAsync(existingBorrowing.BookId);
             if (book != null)
             {
-                book.Availability = true; // Mark the book as available
-                _context.SaveChanges(); // Save the changes to the book
+                book.Availability = true;
+                await _context.SaveChangesAsync();
             }
 
-            // Remove the borrowing entry from the database
             _context.Borrowings.Remove(existingBorrowing);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(BorrowingList));
         }
 
-        // Search Books by Title, Author, or Genre
+        // Search borrowings
         [HttpGet("Search")]
-        public IActionResult Search(string query)
+        public async Task<IActionResult> Search(string query)
         {
-            var borrowings = _context.Borrowings
+            var borrowings = await _context.Borrowings
                 .Include(b => b.Book)
                 .Include(b => b.Reader)
                 .Where(b =>
                     (b.Book != null && b.Book.Title.Contains(query)) ||
                     (b.Reader != null && b.Reader.FullName.Contains(query)) ||
-                    (b.Status.ToString().Contains(query)) || 
-                    (!string.IsNullOrEmpty(b.Notes) && b.Notes.Contains(query))
-                )
-                .ToList();
+                    (b.Status.ToString().Contains(query)) ||
+                    (!string.IsNullOrEmpty(b.Notes) && b.Notes.Contains(query)))
+                .ToListAsync();
 
             return View("SearchResults", borrowings);
         }
-
     }
 }

@@ -1,16 +1,16 @@
 ﻿using Assignment_3_CRUD.Data;
 using Assignment_3_CRUD.Models;
-//using Assignment_3_CRUD.Repositories; removed - Not needed
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Reflection.Metadata.BlobBuilder;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Assignment_3_CRUD.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class BookController : Controller
     {
-        //private readonly IBookRepository _bookRepository; removed - Not needed
         private readonly LMA_DBcontext _context;
 
         public BookController(LMA_DBcontext context)
@@ -18,56 +18,54 @@ namespace Assignment_3_CRUD.Controllers
             _context = context;
         }
 
-
         // Display all books
         [HttpGet]
-        public IActionResult BookList()
+        public async Task<IActionResult> BookList()
         {
-            return View(_context.Books.ToList());
+            var books = await _context.Books.ToListAsync();
+            return View(books);
         }
+
         // Display book details
         [HttpGet("Details/{id}")]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var book = _context.Books.Find(id);
+            var book = await _context.Books.FindAsync(id);
             return book != null ? View(book) : NotFound();
         }
 
-        //Show create form
+        // Show create form
         [HttpGet("Create")]
         public IActionResult AddBook()
         {
             return View();
         }
 
-        //Add a new book
+        // Add a new book
         [HttpPost("Create")]
-        public IActionResult Create(Book newBook)
+        public async Task<IActionResult> Create(Book newBook)
         {
-
             if (ModelState.IsValid)
             {
                 _context.Books.Add(newBook);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(BookList)); // Redirect to book List page
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(BookList));
             }
 
             return View(newBook);
-            
-                
         }
 
         // Show edit form
         [HttpGet("Edit/{id}")]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var book = _context.Books.Find(id);
+            var book = await _context.Books.FindAsync(id);
             return book != null ? View(book) : NotFound();
         }
 
         // Update book details
         [HttpPost("Edit/{id}")]
-        public IActionResult Edit(int id, Book book)
+        public async Task<IActionResult> Edit(int id, Book book)
         {
             if (id != book.Id)
             {
@@ -77,51 +75,44 @@ namespace Assignment_3_CRUD.Controllers
             if (ModelState.IsValid)
             {
                 _context.Entry(book).State = EntityState.Modified;
-                _context.SaveChanges();
-                return RedirectToAction(nameof(BookList)); // Redirect to book List page
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(BookList));
             }
 
             return View(book);
         }
 
-        //Show delete confirmation
+        // Show delete confirmation
         [HttpGet("Delete/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var book = _context.Books.Find(id);
+            var book = await _context.Books.FindAsync(id);
             return book != null ? View(book) : NotFound();
         }
 
-        //Confirm and delete book
+        // Confirm and delete book
         [HttpPost("Delete/{id}")]
-        public IActionResult ConfirmDelete(int id)
+        public async Task<IActionResult> ConfirmDelete(int id)
         {
-            var book = _context.Books.Find(id);
+            var book = await _context.Books.FindAsync(id);
             if (book == null) return NotFound();
 
             _context.Books.Remove(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(BookList));
         }
+
         // Search Books by Title, Author, or Genre
         [HttpGet("Search")]
-        public IActionResult Search(string query)
+        public async Task<IActionResult> Search(string query)
         {
-            var books = _context.Books
+            var books = await _context.Books
                 .Where(b => b.Title.Contains(query) || b.Author.Contains(query) || b.Genre.Contains(query))
-                .ToList();
+                .ToListAsync();
 
             return View("SearchResults", books);
         }
 
 
-        //Helper Method: Find book or return null (Removed- not needed)
-        //private Book FindOrFail(int id) => _bookRepository.GetBookById(id);
-
-        private IActionResult NotFound()
-        {
-            //add 404 page
-            return View("");
-        }
     }
 }

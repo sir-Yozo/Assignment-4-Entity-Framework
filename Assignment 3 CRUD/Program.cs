@@ -36,6 +36,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.SlidingExpiration = true; // Enable sliding expiration
 });
 
+
 var app = builder.Build();
 
 // Enable middleware

@@ -12,13 +12,8 @@
 <body>
   <div class="container mt-4">
         <h2>Login</h2>
-        @* @if (ViewData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @ViewData["ErrorMessage"]
-            </div>
-        } *@
-        <form asp-action="LoginSubmit" method="post">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        <form asp-action="Login" method="post">
             <div class="form-group">
                 <label asp-for="Username" class="control-label">Username</label>
                 <input asp-for="Username" class="form-control" />

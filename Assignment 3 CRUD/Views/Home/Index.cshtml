@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "_Layout";
 }
+@using Microsoft.AspNetCore.Identity;
 <!DOCTYPE html>
     <html>
     <head>
@@ -8,5 +9,9 @@
     </head>
     <body>
         <h1>Dashboard</h1>
+       
+        <p>Welcome @User.Identity!.Name!</p>
+        
+        
     </body>
     </html>

@@ -1,16 +1,15 @@
 ﻿using Assignment_3_CRUD.Data;
 using Assignment_3_CRUD.Models;
-//using Assignment_3_CRUD.Repositories; removed not needed
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Assignment_3_CRUD.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class ReaderController : Controller
     {
-        //private readonly IReaderRepository _readerRepository; removed not needed
         private readonly LMA_DBcontext _context;
 
         public ReaderController(LMA_DBcontext context)
@@ -18,35 +17,38 @@ namespace Assignment_3_CRUD.Controllers
             _context = context;
         }
 
-        //Display All Reader
+        // Display All Readers
         [HttpGet]
-        public IActionResult ReaderListPage()
+        public async Task<IActionResult> ReaderListPage()
         {
-            return View(_context.Readers.ToList());
+            var readers = await _context.Readers.ToListAsync();
+            return View(readers);
         }
-        //Get Reader Details
+
+        // Get Reader Details
         [HttpGet("Details/{id}")]
-        public IActionResult ReaderDetails(int id)
+        public async Task<IActionResult> ReaderDetails(int id)
         {
-            var reader = _context.Readers.Find(id);
+            var reader = await _context.Readers.FindAsync(id);
             return reader != null ? View(reader) : NotFound();
         }
-        //Show create form
+
+        // Show create form
         [HttpGet("AddReader")]
         public IActionResult AddReader()
         {
             return View();
         }
-        //Add a new Reader
-        [HttpPost("AddReader")]
-        public IActionResult AddReader(Reader newReader)
-        {
 
+        // Add a new Reader
+        [HttpPost("AddReader")]
+        public async Task<IActionResult> AddReader(Reader newReader)
+        {
             if (ModelState.IsValid)
             {
-                _context.Readers.Add(newReader);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(ReaderListPage)); // Redirect to Reader List page
+                await _context.Readers.AddAsync(newReader);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ReaderListPage));
             }
 
             return View(newReader);
@@ -54,15 +56,15 @@ namespace Assignment_3_CRUD.Controllers
 
         // Show edit form
         [HttpGet("Edit/{id}")]
-        public IActionResult EditReader(int id)
+        public async Task<IActionResult> EditReader(int id)
         {
-            var reader = _context.Readers.Find(id);
+            var reader = await _context.Readers.FindAsync(id);
             return reader != null ? View(reader) : NotFound();
         }
 
-        // Update reader  details
+        // Update Reader details
         [HttpPost("Edit/{id}")]
-        public IActionResult EditReader(int id, Reader reader)
+        public async Task<IActionResult> EditReader(int id, Reader reader)
         {
             if (id != reader.Id)
             {
@@ -72,52 +74,42 @@ namespace Assignment_3_CRUD.Controllers
             if (ModelState.IsValid)
             {
                 _context.Entry(reader).State = EntityState.Modified;
-                _context.SaveChanges();
-                return RedirectToAction(nameof(ReaderListPage)); // Redirect to Reader List page
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ReaderListPage));
             }
 
             return View(reader);
         }
-        
 
-        
-
-        //Show delete confirmation
+        // Show delete confirmation
         [HttpGet("Delete/{id}")]
-        public IActionResult DeleteReader(int id)
+        public async Task<IActionResult> DeleteReader(int id)
         {
-            var reader = _context.Readers.Find(id);
+            var reader = await _context.Readers.FindAsync(id);
             return reader != null ? View(reader) : NotFound();
         }
 
-        //Confirm and delete reader
+        // Confirm and delete Reader
         [HttpPost("Delete/{id}")]
-        public IActionResult ConfirmDelete(int id)
+        public async Task<IActionResult> ConfirmDelete(int id)
         {
-            var reader = _context.Readers.Find(id);
+            var reader = await _context.Readers.FindAsync(id);
             if (reader == null) return NotFound();
 
             _context.Readers.Remove(reader);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(ReaderListPage));
         }
-        //Helper Method: Find book or return null - removed not needed
-        //private Reader FindOrFail(int id) => _readerRepository.GetReaderById(id);
 
-        // Search Reader by Name 
+        // Search Readers by Name
         [HttpGet("Search")]
-        public IActionResult Search(string query)
+        public async Task<IActionResult> Search(string query)
         {
-            var readers = _context.Readers
+            var readers = await _context.Readers
                 .Where(r => r.FullName.Contains(query))
-                .ToList();
+                .ToListAsync();
 
             return View("SearchResults", readers);
-        }
-        private IActionResult NotFound()
-        {
-            //add 404 page
-            return View("");
         }
 
 
